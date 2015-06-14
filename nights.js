@@ -1,7 +1,7 @@
 /* 
 	Provide a set of positive integers (an array of integers). Each integer represent number of 
 	nights user has requested at a hotel. If you are a host, you need to design and implement 
-	an algorithm to find out the maximum number a nights you can accommodate. The constrain 
+	an algorithm to find out the maximum number a nights you can accommodate. The constraint 
 	is that you have to reserve at least one day between each request.
 
 	Example:
