@@ -12,44 +12,47 @@
 
 var bookingNights = [5, 1, 2, 6, 20, 2],
     numberOfBookings = bookingNights.length,
-    bookingDays = bookingNights.map(function(bookingNight){ return bookingNight + 1; });
-    totalDaysRequested = bookingDays.reduce(function(totalDays, bookingDay) { return totalDays + bookingDay; }),
-    totalDaysRequired = totalDaysRequested + (numberOfBookings - 1),
-    optimalBookings = bookingDays.slice(0);
+    totalNightsRequested = bookingNights.reduce(function(totalNights, booking) { return totalNights + booking; }),
+    // 1 night buffer between bookings to allow for cleaning
+    totalNightsRequired = totalNightsRequested + (numberOfBookings - 1),
+    // We'll remove non-optimal bookings from this array
+    optimalBookings = bookingNights.slice(0);
 
-console.log("totalDaysRequested", totalDaysRequested);
-console.log("totalDaysRequired", totalDaysRequired);
+console.log("totalNightsRequested", totalNightsRequested);
+console.log("totalNightsRequired", totalNightsRequired);
 
 // Go from the end of the bookings backwards finding the smallest
-// booking we can remove to get us under the days required number
-
+// booking we can remove to get us under the nights required number
 function removeShortestStay(bookings) {
 	
 	var shortestStay = Math.min.apply(this, bookings),
-	    shortestStayIndex = optimalBookings.indexOf(shortestStay);
-		
+	    bookingsShortestStayIndex = bookings.indexOf(shortestStay),
+	    optimalShortestStayIndex = optimalBookings.indexOf(shortestStay);
+	
+	console.log("------------------------------");
+	console.log("bookings", bookings);
 	console.log("shortestStay", shortestStay);
+	console.log("totalNightsRequired - shortestStay", totalNightsRequired - shortestStay);
+	console.log("totalNightsRequested", totalNightsRequested);
 	
 	// Does removing this stay bring us under the number of days we have?
-	if (totalDaysRequired - shortestStay <= totalDaysRequested) {
-		// YEP!
-		optimalBookings.splice(shortestStayIndex, 1);
+	if (totalNightsRequired - shortestStay <= totalNightsRequested) {
+		// YEP! No more recursion
+		optimalBookings.splice(optimalShortestStayIndex, 1);
 	} else {
 		// Nope. Remove this one from the array and remove the next shortest
-		optimalBookings.splice(shortestStayIndex, 1);
-		removeShortestStay(optimalBookings);
+		totalNightsRequired = totalNightsRequired - shortestStay;
+		optimalBookings.splice(optimalShortestStayIndex, 1);
+		bookings.splice(bookingsShortestStayIndex, 1);
+		removeShortestStay(bookings);
 	}
-	
-	console.log("optimalBookings", optimalBookings);
 	
 }
 
-// We have to include the first day
-bookingDays.splice(0, 1);
-removeShortestStay(bookingDays);
+// We have to include the first day so don't pass it 
+// into the recursive function
+bookingNights.splice(0, 1);
+removeShortestStay(bookingNights);
 
-// Map back to nights
-var optimalBookingNights = optimalBookings.map(function(bookingDay) { return bookingDay - 1; });
-
-console.log("Maximum number of nights:", optimalBookingNights.reduce(function(total, night) { return total + night; }));
-console.log("Made up of:", optimalBookingNights);
+console.log("Maximum number of booked nights:", optimalBookings.reduce(function(total, night) { return total + night; }));
+console.log("Made up of:", optimalBookings);
